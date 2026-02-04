@@ -1,11 +1,22 @@
-import express from 'express';
-import cors from 'cors';
 import dotenv from 'dotenv';
-import { GoogleGenAI } from '@google/genai';
-
 dotenv.config();
 
+import express from 'express';
+import cors from 'cors';
+import { GoogleGenAI } from '@google/genai';
 const app = express();
+
+const genAi = new GoogleGenAI({ apiKey: process.env.GOOGLE_API_KEY });
+
+const GEMINI_MODEL = 'gemini-2.5-flash';
+
+app.use(express.json());
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${PORT}`));
+
+
+console.log(process.env.GOOGLE_API_KEY);
 const port = process.env.PORT || 3000;
 
 app.use(cors());
@@ -13,7 +24,6 @@ app.use(express.json());
 app.use(express.static('public'));
 
 
-const genAi = new GoogleGenAI({ apiKey: process.env.GOOGLE_API_KEY });
 
 app.post('/api/chat', async (req, res) => {
   try {
@@ -32,7 +42,7 @@ app.post('/api/chat', async (req, res) => {
     console.log("API KEY LOADED:", !!process.env.GOOGLE_API_KEY);
 
     const result = await genAi.models.generateContent({
-        model: "gemini-1.0-pro",
+        model: GEMINI_MODEL,
       contents: [
         {
           role: "user",
